@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { View, Button } from 'react-native';
+import { TouchableOpacity, View, Text } from 'react-native';
+import { Provider as PaperProvider, Menu } from 'react-native-paper';
+import { Ionicons } from '@expo/vector-icons';
 
 import LoginScreen from './screens/LoginScreen';
 import MoodLogScreen from './screens/MoodLogScreen';
@@ -11,56 +13,74 @@ import ReminderScreen from './screens/ReminderScreen';
 
 const Stack = createNativeStackNavigator();
 
-export default function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // 🔐 controls login flow
+// 🔘 Hamburger menu component
+function HeaderMenu({ navigation }) {
+  const [visible, setVisible] = useState(false);
+  const openMenu = () => setVisible(true);
+  const closeMenu = () => setVisible(false);
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-  {!isLoggedIn ? (
-    <Stack.Screen
-      name="Login"
-      options={{ headerShown: false }} // 👈 only hide for login
+    <Menu
+      visible={visible}
+      onDismiss={closeMenu}
+      anchor={
+        <Ionicons
+          name="menu"
+          size={28}
+          color="#007AFF"
+          onPress={openMenu}
+          style={{ marginRight: 10 }}
+        />
+      }
     >
-      {(props) => (
-        <LoginScreen {...props} onLogin={() => setIsLoggedIn(true)} />
-      )}
-    </Stack.Screen>
-  ) : (
-    <>
+      <Menu.Item onPress={() => { closeMenu(); navigation.navigate('Summary'); }} title="Summary" />
+      <Menu.Item onPress={() => { closeMenu(); navigation.navigate('Resources'); }} title="Resources" />
+      <Menu.Item onPress={() => { closeMenu(); navigation.navigate('Reminders'); }} title="Reminders" />
+    </Menu>
+  );
+}
 
-    
-<Stack.Screen
-  name="MoodLog"
-  component={MoodLogScreen}
-  options={({ navigation }) => ({
-    title: 'Mood Log',
-    headerRight: () => (
-      <View style={{ flexDirection: 'row', gap: 8, paddingRight: 10 }}>
-        <Button
-          title="Summary"
-          onPress={() => navigation.navigate('Summary')}
-        />
-        <Button
-          title="Resources"
-          onPress={() => navigation.navigate('Resources')}
-        />
-        <Button
-          title="Reminders"
-          onPress={() => navigation.navigate('Reminders')}
-        />
+export default function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-      </View>
-    )
-  })}
-/>
-      <Stack.Screen name="Summary" component={MoodSummaryScreen} />
-      <Stack.Screen name="Resources" component={ResourceScreen} />
-      <Stack.Screen name="Reminders" component={ReminderScreen} />
-    </>
-  )}
-      </Stack.Navigator>
-
-    </NavigationContainer>
+  return (
+    <PaperProvider>
+      <NavigationContainer>
+        <Stack.Navigator>
+          {!isLoggedIn ? (
+            <Stack.Screen
+              name="Login"
+              options={{ headerShown: false }}
+            >
+              {(props) => (
+                <LoginScreen {...props} onLogin={() => setIsLoggedIn(true)} />
+              )}
+            </Stack.Screen>
+          ) : (
+            <>
+              <Stack.Screen
+                name="MoodLog"
+                component={MoodLogScreen}
+                options={({ navigation }) => ({
+                  title: 'Mood Log',
+                  headerTitleAlign: 'center',
+                  headerLeft: () => (
+                    <View style={{ paddingLeft: 16 }}>
+                      <TouchableOpacity onPress={() => setIsLoggedIn(false)}>
+                        <Text style={{ color: '#007AFF', fontWeight: '600' }}>Logout</Text>
+                      </TouchableOpacity>
+                    </View>
+                  ),
+                  headerRight: () => <HeaderMenu navigation={navigation} />
+                })}
+              />
+              <Stack.Screen name="Summary" component={MoodSummaryScreen} />
+              <Stack.Screen name="Resources" component={ResourceScreen} />
+              <Stack.Screen name="Reminders" component={ReminderScreen} />
+            </>
+          )}
+        </Stack.Navigator>
+      </NavigationContainer>
+    </PaperProvider>
   );
 }
