@@ -12,7 +12,7 @@ export default function LoginScreen({ navigation, onLogin }) {
     }
 
     try {
-      const response = await fetch('http://localhost:3000/login', {
+      const response = await fetch(`${API_BASE_URL}/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
@@ -62,6 +62,12 @@ return (
             title="Create Account"
             onPress={() => navigation.navigate('Register')}
           />
+
+          {__DEV__ && (
+            <View style={{ marginTop: 8 }}>
+              <Button title="Dev: Skip Login" onPress={onLogin} />
+            </View>
+          )}
         </View>
       </View>
     </TouchableWithoutFeedback>
