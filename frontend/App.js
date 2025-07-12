@@ -6,6 +6,7 @@ import { Provider as PaperProvider, Menu } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
 
 import LoginScreen from './screens/LoginScreen';
+import RegisterScreen from './screens/RegisterScreen';
 import MoodLogScreen from './screens/MoodLogScreen';
 import MoodSummaryScreen from './screens/MoodSummaryScreen';
 import ResourceScreen from './screens/ResourceScreen';
@@ -48,14 +49,18 @@ export default function App() {
       <NavigationContainer>
         <Stack.Navigator>
           {!isLoggedIn ? (
-            <Stack.Screen
-              name="Login"
-              options={{ headerShown: false }}
-            >
-              {(props) => (
-                <LoginScreen {...props} onLogin={() => setIsLoggedIn(true)} />
-              )}
-            </Stack.Screen>
+            <>
+              <Stack.Screen name="Login" options={{ headerShown: false }}>
+                {(props) => (
+                  <LoginScreen {...props} onLogin={() => setIsLoggedIn(true)} />
+                )}
+              </Stack.Screen>
+              <Stack.Screen name="Register" options={{ title: 'Create Account' }}>
+                {(props) => (
+                  <RegisterScreen {...props} onLogin={() => setIsLoggedIn(true)} />
+                )}
+              </Stack.Screen>
+            </>
           ) : (
             <>
               <Stack.Screen

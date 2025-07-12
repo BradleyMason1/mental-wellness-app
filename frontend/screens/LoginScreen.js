@@ -1,21 +1,31 @@
 import React, { useState } from 'react';
 import { View, Text, Button, StyleSheet, TextInput, Alert, TouchableWithoutFeedback, Keyboard, KeyboardAvoidingView } from 'react-native';
 
-export default function LoginScreen({ onLogin }) {
+export default function LoginScreen({ navigation, onLogin }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (!email || !password) {
       Alert.alert('Missing Fields', 'Please enter both email and password.');
       return;
     }
 
-    // Placeholder for real auth
-    if (email === 'test@mail.com' && password === '123456') {
-      onLogin(); // unlocks the app
-    } else {
-      Alert.alert('Login Failed', 'Incorrect credentials.');
+    try {
+      const response = await fetch('http://localhost:3000/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      const data = await response.json();
+
+      if (response.ok && data.message === 'Login successful') {
+        onLogin();
+      } else {
+        Alert.alert('Login Failed', data.message || 'Incorrect credentials.');
+      }
+    } catch (error) {
+      Alert.alert('Network Error', 'Unable to reach the server.');
     }
   };
 
@@ -47,6 +57,12 @@ return (
         />
 
         <Button title="Login" onPress={handleLogin} />
+        <View style={{ marginTop: 12 }}>
+          <Button
+            title="Create Account"
+            onPress={() => navigation.navigate('Register')}
+          />
+        </View>
       </View>
     </TouchableWithoutFeedback>
   </KeyboardAvoidingView>
