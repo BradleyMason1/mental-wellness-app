@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, Button, StyleSheet, TextInput, Alert, TouchableWithoutFeedback, Keyboard, KeyboardAvoidingView } from 'react-native';
+import { API_BASE_URL } from '../utils/api';
+
 
 export default function LoginScreen({ navigation, onLogin }) {
   const [email, setEmail] = useState('');
