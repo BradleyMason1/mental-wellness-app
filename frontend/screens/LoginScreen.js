@@ -13,6 +13,17 @@ export default function LoginScreen({ navigation, onLogin }) {
       return;
     }
 
+    if (!isValidEmail(email)) {
+      Alert.alert('Invalid Email', 'Please enter a valid email address.');
+      return;
+    }
+
+    if (!isValidPassword(password)) {
+      Alert.alert('Password Too Short', 'Password must be at least 6 characters.');
+      return;
+    }
+
+
     try {
       const response = await fetch(`${API_BASE_URL}/login`, {
         method: 'POST',

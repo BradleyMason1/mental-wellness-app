@@ -57,6 +57,7 @@ A cross-platform mobile application designed to help users log their daily moods
 ## 📦 Features
 
 - ✅ Secure user registration and login (FR1)
+- ✅ Email format and password length validation on login and registration screenss
 - ✅ Daily mood logging with optional notes (FR2)
 - ✅ Curated resource library with categories (FR3)
 - ✅ Weekly mood summary graph/report (FR4)

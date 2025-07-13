@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, Button, StyleSheet, TextInput, Alert, TouchableWithoutFeedback, Keyboard, KeyboardAvoidingView } from 'react-native';
 import { API_BASE_URL } from '../utils/api';
+import { isValidEmail, isValidPassword } from '../utils/validation';
+
 
 
 export default function RegisterScreen({ navigation, onLogin }) {
@@ -10,6 +12,16 @@ export default function RegisterScreen({ navigation, onLogin }) {
   const handleRegister = async () => {
     if (!email || !password) {
       Alert.alert('Missing Fields', 'Please enter both email and password.');
+      return;
+    }
+
+    if (!isValidEmail(email)) {
+      Alert.alert('Invalid Email', 'Please enter a valid email address.');
+      return;
+    }
+
+    if (!isValidPassword(password)) {
+      Alert.alert('Password Too Short', 'Password must be at least 6 characters.');
       return;
     }
 

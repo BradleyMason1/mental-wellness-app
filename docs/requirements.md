@@ -47,3 +47,7 @@ The UI should be responsive and accessible.
 
 NFR3: Minimal Downtime
 The app should maintain a minimum uptime of 99% to ensure reliable user access.
+
+
+Since we are not deploying the app publicly, all testing occurs over HTTP in a local development environment. While production apps should send credentials over HTTPS and store tokens securely, for this academic prototype, our focus is on functionality and usability, not production-grade security.
+
