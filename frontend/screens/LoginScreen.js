@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, Button, StyleSheet, TextInput, Alert, TouchableWithoutFeedback, Keyboard, KeyboardAvoidingView } from 'react-native';
 import { API_BASE_URL } from '../utils/api';
+import { isValidEmail, isValidPassword } from '../utils/validation';
+
 
 
 export default function LoginScreen({ navigation, onLogin }) {
