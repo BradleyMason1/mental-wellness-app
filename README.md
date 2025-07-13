@@ -75,8 +75,8 @@ A cross-platform mobile application designed to help users log their daily moods
 
 1. Clone the repo:
    ```bash
-   git clone https://github.com/BradleyMason1/mental-wellness-app.git
-   cd mental-wellness-app
+git clone https://github.com/BradleyMason1/mental-wellness-app.git
+cd mental-wellness-app
 
    git checkout feature/frX-your-assigned-branch  'For Example: git checkout feature/fr4-mood-summary'
    
@@ -86,7 +86,18 @@ A cross-platform mobile application designed to help users log their daily moods
    'This means you are in your working branch and anything you do such as git add ., or git commit -m "Your commit message", or git push will be pushed to your branch '
 
 
-   git fetch --all (if anything is new it will let you know)
+  git fetch --all (if anything is new it will let you know)
+
+2. Install backend dependencies and start the server locally:
+   ```bash
+   cd backend
+   npm install
+   npm start
+   ```
+
+   User accounts will be stored in `database/db.json` so they persist between
+   restarts. On login, the server returns a JSON Web Token that can be used with
+   the protected `/profile` endpoint.
 
 ## 👥 Branch Assignments & Responsibilities
 
