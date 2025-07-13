@@ -12,13 +12,20 @@ app.use(express.json());
 // Lowdb setup for simple JSON-based storage
 const dbFile = path.join(__dirname, '../database/db.json');
 const adapter = new JSONFile(dbFile);
-const db = new Low(adapter, { defaultData: { users: [] } });
+const db = new Low(adapter);
 const SECRET = process.env.JWT_SECRET || 'dev-secret';
 
 async function initDB() {
   await db.read();
+  db.data ||= { users: [] };
   await db.write();
 }
+
+async function readDB() {
+  await db.read();
+  db.data ||= { users: [] };
+}
+
 
 initDB();
 
@@ -29,7 +36,7 @@ app.post('/register', async (req, res) => {
     return res.status(400).json({ error: 'Email and password required' });
   }
 
-  await db.read();
+  await readDB();
   const existing = db.data.users.find(u => u.email === email);
   if (existing) {
     return res.status(400).json({ error: 'User already exists' });
@@ -52,7 +59,7 @@ app.post('/login', async (req, res) => {
     return res.status(400).json({ error: 'Email and password required' });
   }
 
-  await db.read();
+  await readDB();
   const user = db.data.users.find(u => u.email === email);
   if (!user) {
     return res.status(400).json({ error: 'Invalid credentials' });
@@ -84,7 +91,7 @@ function authMiddleware(req, res, next) {
 
 // Example protected route
 app.get('/profile', authMiddleware, async (req, res) => {
-  await db.read();
+  await readDB();
   const user = db.data.users.find(u => u.id === req.user.userId);
   if (!user) return res.status(404).json({ error: 'User not found' });
   res.json({ email: user.email });
