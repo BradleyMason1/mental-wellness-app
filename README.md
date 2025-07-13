@@ -95,8 +95,9 @@ cd mental-wellness-app
    npm start
    ```
 
-   User accounts will be stored in `database/db.json` so they persist between
-   restarts. On login, the server returns a JSON Web Token that can be used with
+   On first run the server will automatically create `database/db.json` if it doesn't exist. 
+   User accounts are stored there so they persist between restarts. 
+   On login, the server returns a JSON Web Token that can be used with
    the protected `/profile` endpoint.
 
 ## 👥 Branch Assignments & Responsibilities

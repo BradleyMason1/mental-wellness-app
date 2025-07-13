@@ -19,19 +19,24 @@ const SECRET = process.env.JWT_SECRET || 'dev-secret';
 
 async function initDB() {
   await db.read();
-  db.data ||= { users: [] };
-  await db.write();
+  if (!db.data || !Array.isArray(db.data.users)) {
+    db.data = { users: [] };
+  }  await db.write();
 }
 
 async function readDB() {
   await db.read();
-  db.data ||= { users: [] };
+  if (!db.data || !Array.isArray(db.data.users)) {
+    db.data = { users: [] };
+  }
 }
 
 
-initDB();
-
+// Initialize the database before starting the server
+// to ensure db.data is always defined
+// Server start moved to the bottom of the file
 // Register a new user
+
 app.post('/register', async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
@@ -101,4 +106,7 @@ app.get('/profile', authMiddleware, async (req, res) => {
 
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+// Start server after database initialization
+initDB().then(() => {
+  app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+});
