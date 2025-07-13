@@ -5,11 +5,11 @@ import { isValidEmail, isValidPassword } from '../utils/validation';
 
 
 
-export default function LoginScreen({ navigation, onLogin }) {
+export default function RegisterScreen({ navigation, onLogin }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = async () => {
+  const handleRegister = async () => {
     if (!email || !password) {
       Alert.alert('Missing Fields', 'Please enter both email and password.');
       return;
@@ -25,69 +25,49 @@ export default function LoginScreen({ navigation, onLogin }) {
       return;
     }
 
-
     try {
-      const response = await fetch(`${API_BASE_URL}/login`, {
+      const response = await fetch(`${API_BASE_URL}/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
       });
       const data = await response.json();
 
-      if (response.ok && data.message === 'Login successful') {
+      if (response.ok && data.message === 'Registration successful') {
         onLogin();
       } else {
-        Alert.alert('Login Failed', data.message || 'Incorrect credentials.');
+        Alert.alert('Registration Failed', data.message || 'Please try again.');
       }
     } catch (error) {
       Alert.alert('Network Error', 'Unable to reach the server.');
     }
   };
 
-return (
-  <KeyboardAvoidingView
-    style={{ flex: 1 }}
-    behavior="padding"
-    keyboardVerticalOffset={60} // adjust based on your header height
-  >
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={styles.container}>
-        <Text style={styles.title}>Welcome Back</Text>
-
-        <TextInput
-          placeholder="Email"
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-          autoCapitalize="none"
-          style={styles.input}
-        />
-
-        <TextInput
-          placeholder="Password"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-          style={styles.input}
-        />
-
-        <Button title="Login" onPress={handleLogin} />
-        <View style={{ marginTop: 12 }}>
-          <Button
-            title="Create Account"
-            onPress={() => navigation.navigate('Register')}
+  return (
+    <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding" keyboardVerticalOffset={60}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View style={styles.container}>
+          <Text style={styles.title}>Create Account</Text>
+          <TextInput
+            placeholder="Email"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+            autoCapitalize="none"
+            style={styles.input}
           />
-
-          {__DEV__ && (
-            <View style={{ marginTop: 8 }}>
-              <Button title="Dev: Skip Login" onPress={onLogin} />
-            </View>
-          )}
+          <TextInput
+            placeholder="Password"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+            style={styles.input}
+          />
+          <Button title="Create Account" onPress={handleRegister} />
         </View>
-      </View>
-    </TouchableWithoutFeedback>
-  </KeyboardAvoidingView>
-);
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
+  );
 }
 
 const styles = StyleSheet.create({
