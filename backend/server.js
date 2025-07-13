@@ -12,7 +12,9 @@ app.use(express.json());
 // Lowdb setup for simple JSON-based storage
 const dbFile = path.join(__dirname, '../database/db.json');
 const adapter = new JSONFile(dbFile);
-const db = new Low(adapter);
+// Initialize LowDB with default structure so a missing database file doesn't
+// throw an error when the server starts
+const db = new Low(adapter, { users: [] });
 const SECRET = process.env.JWT_SECRET || 'dev-secret';
 
 async function initDB() {
