@@ -107,7 +107,7 @@ cd mental-wellness-app
 | `feature/fr1-authentication` | Login + Registration  | UI forms (email, password), form validation, error messages, API hookup                 | *\[Bradley Mason]* |
 | `feature/fr2-mood-logging`   | Daily Mood Tracker    | Mood selection UI (emoji/slider), note input box, save button, storage                  | *\[Maekin Tantasook]* |
 | `feature/fr3-resources`      | Resource Center       | UI for listing articles/videos, filters/search bar, handling broken links               | *\[Insert Name]* |
-| `feature/fr4-mood-summary`   | Weekly Mood Summary   | Graph/chart UI, "no data" states, mood trend visualizations                             | *\[Insert Name]* |
+| `feature/fr4-mood-summary`   | Weekly Mood Summary   | Graph/chart UI, "no data" states, mood trend visualizations                             | *\[Stephanie Oswald]* |
 | `feature/fr5-reminders`      | Notification Settings | UI for time picker, toggle switches, saving reminder settings, triggering notifications | *\[Miya Major]* |
 
 
