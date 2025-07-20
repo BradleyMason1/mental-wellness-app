@@ -1,9 +1,18 @@
 import React, { useState } from 'react';
-import { View, Text, Button, StyleSheet, TextInput, Alert, TouchableWithoutFeedback, Keyboard, KeyboardAvoidingView } from 'react-native';
+import {
+  View,
+  Text,
+  Button,
+  StyleSheet,
+  TextInput,
+  Alert,
+  TouchableWithoutFeedback,
+  Keyboard,
+  KeyboardAvoidingView,
+} from 'react-native';
 import { API_BASE_URL } from '../utils/api';
 import { isValidEmail, isValidPassword } from '../utils/validation';
-
-
+import AsyncStorage from '@react-native-async-storage/async-storage'; // Added to store login token
 
 export default function LoginScreen({ navigation, onLogin }) {
   const [email, setEmail] = useState('');
@@ -25,16 +34,19 @@ export default function LoginScreen({ navigation, onLogin }) {
       return;
     }
 
-
     try {
       const response = await fetch(`${API_BASE_URL}/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
+        body: JSON.stringify({ email, password }),
       });
+
       const data = await response.json();
 
-      if (response.ok && data.message === 'Login successful') {
+      // Save the token to AsyncStorage if login is successful
+      if (response.ok && data.token) {
+        await AsyncStorage.setItem('token', data.token); // store the token
+        console.log('Saved token:', data.token);
         onLogin();
       } else {
         Alert.alert('Login Failed', data.message || 'Incorrect credentials.');
@@ -44,50 +56,51 @@ export default function LoginScreen({ navigation, onLogin }) {
     }
   };
 
-return (
-  <KeyboardAvoidingView
-    style={{ flex: 1 }}
-    behavior="padding"
-    keyboardVerticalOffset={60} // adjust based on your header height
-  >
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={styles.container}>
-        <Text style={styles.title}>Welcome Back</Text>
+  return (
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior="padding"
+      keyboardVerticalOffset={60}
+    >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View style={styles.container}>
+          <Text style={styles.title}>Welcome Back</Text>
 
-        <TextInput
-          placeholder="Email"
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-          autoCapitalize="none"
-          style={styles.input}
-        />
-
-        <TextInput
-          placeholder="Password"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-          style={styles.input}
-        />
-
-        <Button title="Login" onPress={handleLogin} />
-        <View style={{ marginTop: 12 }}>
-          <Button
-            title="Create Account"
-            onPress={() => navigation.navigate('Register')}
+          <TextInput
+            placeholder="Email"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+            autoCapitalize="none"
+            style={styles.input}
           />
 
-          {__DEV__ && (
-            <View style={{ marginTop: 8 }}>
-              <Button title="Dev: Skip Login" onPress={onLogin} />
-            </View>
-          )}
+          <TextInput
+            placeholder="Password"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+            style={styles.input}
+          />
+
+          <Button title="Login" onPress={handleLogin} />
+
+          <View style={{ marginTop: 12 }}>
+            <Button
+              title="Create Account"
+              onPress={() => navigation.navigate('Register')}
+            />
+
+            {__DEV__ && (
+              <View style={{ marginTop: 8 }}>
+                <Button title="Dev: Skip Login" onPress={onLogin} />
+              </View>
+            )}
+          </View>
         </View>
-      </View>
-    </TouchableWithoutFeedback>
-  </KeyboardAvoidingView>
-);
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -95,13 +108,13 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     paddingHorizontal: 24,
-    backgroundColor: '#f9f9f9'
+    backgroundColor: '#f9f9f9',
   },
   title: {
     fontSize: 28,
     fontWeight: '600',
     marginBottom: 24,
-    textAlign: 'center'
+    textAlign: 'center',
   },
   input: {
     backgroundColor: '#fff',
@@ -109,6 +122,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderColor: '#ccc',
     borderWidth: 1,
-    marginBottom: 16
-  }
+    marginBottom: 16,
+  },
 });

@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 const bcrypt = require('bcrypt');
 const { Low } = require('lowdb');
 const { JSONFile } = require('lowdb/node');
@@ -7,20 +8,21 @@ const { v4: uuidv4 } = require('uuid');
 const path = require('path');
 
 const app = express();
+
+// Enable CORS
+app.use(cors());
 app.use(express.json());
 
-// Lowdb setup for simple JSON-based storage
+// Lowdb setup
 const dbFile = path.join(__dirname, '../database/db.json');
 const adapter = new JSONFile(dbFile);
-// Initialize LowDB with default structure so a missing database file doesn't
-// throw an error when the server starts
-const db = new Low(adapter, { users: [], moods: [] }); //  added moods array
+const db = new Low(adapter, { users: [], moods: [] });
 const SECRET = process.env.JWT_SECRET || 'dev-secret';
 
 async function initDB() {
   await db.read();
   if (!db.data || !Array.isArray(db.data.users)) {
-    db.data = { users: [], moods: [] }; //  ensure moods is initialized
+    db.data = { users: [], moods: [] };
   }
   await db.write();
 }
@@ -28,16 +30,11 @@ async function initDB() {
 async function readDB() {
   await db.read();
   if (!db.data || !Array.isArray(db.data.users)) {
-    db.data = { users: [], moods: [] }; //  same here
+    db.data = { users: [], moods: [] };
   }
 }
 
-
-// Initialize the database before starting the server
-// to ensure db.data is always defined
-// Server start moved to the bottom of the file
-// Register a new user
-
+// Register
 app.post('/register', async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
@@ -60,7 +57,7 @@ app.post('/register', async (req, res) => {
   }
 });
 
-// Login route
+// Login
 app.post('/login', async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
@@ -85,10 +82,12 @@ app.post('/login', async (req, res) => {
   }
 });
 
+// Auth middleware
 function authMiddleware(req, res, next) {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
   if (!token) return res.status(401).json({ error: 'Unauthorized' });
+
   try {
     req.user = jwt.verify(token, SECRET);
     next();
@@ -97,7 +96,7 @@ function authMiddleware(req, res, next) {
   }
 }
 
-// Example protected route
+// Get profile
 app.get('/profile', authMiddleware, async (req, res) => {
   await readDB();
   const user = db.data.users.find(u => u.id === req.user.userId);
@@ -105,7 +104,7 @@ app.get('/profile', authMiddleware, async (req, res) => {
   res.json({ email: user.email });
 });
 
-// ➕ Save a mood entry (protected route)
+// Save mood
 app.post('/moods', authMiddleware, async (req, res) => {
   const { mood, note } = req.body;
   if (!mood) {
@@ -132,7 +131,7 @@ app.post('/moods', authMiddleware, async (req, res) => {
   res.status(201).json({ message: 'Mood saved', entry });
 });
 
-// ➕ Fetch all mood entries for the logged-in user
+// Get moods
 app.get('/moods', authMiddleware, async (req, res) => {
   await readDB();
   const userId = req.user.userId;
@@ -145,9 +144,8 @@ app.get('/moods', authMiddleware, async (req, res) => {
   res.json(userMoods);
 });
 
-
+// Start server
 const PORT = process.env.PORT || 3000;
-// Start server after database initialization
 initDB().then(() => {
   app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 });
