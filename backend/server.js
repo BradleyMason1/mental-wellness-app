@@ -14,20 +14,21 @@ const dbFile = path.join(__dirname, '../database/db.json');
 const adapter = new JSONFile(dbFile);
 // Initialize LowDB with default structure so a missing database file doesn't
 // throw an error when the server starts
-const db = new Low(adapter, { users: [] });
+const db = new Low(adapter, { users: [], moods: [] }); //  added moods array
 const SECRET = process.env.JWT_SECRET || 'dev-secret';
 
 async function initDB() {
   await db.read();
   if (!db.data || !Array.isArray(db.data.users)) {
-    db.data = { users: [] };
-  }  await db.write();
+    db.data = { users: [], moods: [] }; //  ensure moods is initialized
+  }
+  await db.write();
 }
 
 async function readDB() {
   await db.read();
   if (!db.data || !Array.isArray(db.data.users)) {
-    db.data = { users: [] };
+    db.data = { users: [], moods: [] }; //  same here
   }
 }
 
@@ -102,6 +103,46 @@ app.get('/profile', authMiddleware, async (req, res) => {
   const user = db.data.users.find(u => u.id === req.user.userId);
   if (!user) return res.status(404).json({ error: 'User not found' });
   res.json({ email: user.email });
+});
+
+// ➕ Save a mood entry (protected route)
+app.post('/moods', authMiddleware, async (req, res) => {
+  const { mood, note } = req.body;
+  if (!mood) {
+    return res.status(400).json({ error: 'Mood is required' });
+  }
+
+  await readDB();
+  const userId = req.user.userId;
+
+  if (!db.data.moods) {
+    db.data.moods = [];
+  }
+
+  const entry = {
+    id: uuidv4(),
+    userId,
+    mood,
+    note: note || '',
+    timestamp: new Date().toISOString(),
+  };
+
+  db.data.moods.push(entry);
+  await db.write();
+  res.status(201).json({ message: 'Mood saved', entry });
+});
+
+// ➕ Fetch all mood entries for the logged-in user
+app.get('/moods', authMiddleware, async (req, res) => {
+  await readDB();
+  const userId = req.user.userId;
+
+  if (!db.data.moods) {
+    return res.json([]);
+  }
+
+  const userMoods = db.data.moods.filter(m => m.userId === userId);
+  res.json(userMoods);
 });
 
 
