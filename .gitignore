@@ -141,3 +141,8 @@ vite.config.ts.timestamp-*
 
 # Local development database
 database/db.json
+
+
+# api.js
+frontend/utils/api.js
+
