@@ -69,7 +69,7 @@ export default function LoginScreen({ navigation, onLogin }) {
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <ImageBackground source={loginBackground} style={styles.background}>
           <View style={styles.container}>
-          <Text style={styles.title}>Welcome Back</Text>
+            <Text style={styles.title}>Welcome Back</Text>
 
           <TextInput
             placeholder="Email"
@@ -96,12 +96,12 @@ export default function LoginScreen({ navigation, onLogin }) {
               onPress={() => navigation.navigate('Register')}
             />
 
-            {__DEV__ && (
-              <View style={{ marginTop: 8 }}>
-                <Button title="Dev: Skip Login" onPress={onLogin} />
-              </View>
-            )}
-          </View>
+          {__DEV__ && (
+            <View style={{ marginTop: 8 }}>
+              <Button title="Dev: Skip Login" onPress={onLogin} />
+            </View>
+          )}
+        </View>
         </View>
       </ImageBackground>
     </TouchableWithoutFeedback>
@@ -120,7 +120,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     paddingHorizontal: 24,
-    backgroundColor: '#f9f9f9',
+    backgroundColor: 'transparent',
+
   },
   title: {
     fontSize: 28,
