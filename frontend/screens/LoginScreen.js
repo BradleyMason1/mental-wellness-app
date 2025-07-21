@@ -9,10 +9,14 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   KeyboardAvoidingView,
+  ImageBackground,
+
 } from 'react-native';
 import { API_BASE_URL } from '../utils/api';
 import { isValidEmail, isValidPassword } from '../utils/validation';
 import AsyncStorage from '@react-native-async-storage/async-storage'; // Added to store login token
+import loginBackground from '../assets/images/loginscreenbackground.png';
+
 
 export default function LoginScreen({ navigation, onLogin }) {
   const [email, setEmail] = useState('');
@@ -63,7 +67,8 @@ export default function LoginScreen({ navigation, onLogin }) {
       keyboardVerticalOffset={60}
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={styles.container}>
+        <ImageBackground source={loginBackground} style={styles.background}>
+          <View style={styles.container}>
           <Text style={styles.title}>Welcome Back</Text>
 
           <TextInput
@@ -98,12 +103,19 @@ export default function LoginScreen({ navigation, onLogin }) {
             )}
           </View>
         </View>
-      </TouchableWithoutFeedback>
-    </KeyboardAvoidingView>
+      </ImageBackground>
+    </TouchableWithoutFeedback>
+  </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
+  background: {
+    flex: 1,
+    resizeMode: 'cover',
+    width: '100%',
+   height: '100%',
+  },
   container: {
     flex: 1,
     justifyContent: 'center',
