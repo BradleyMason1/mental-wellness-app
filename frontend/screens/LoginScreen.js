@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import {
   View,
   Text,
-  Button,
   StyleSheet,
   TextInput,
   Alert,
   TouchableWithoutFeedback,
+  TouchableOpacity,
   Keyboard,
   KeyboardAvoidingView,
   ImageBackground,
@@ -88,20 +88,27 @@ export default function LoginScreen({ navigation, onLogin }) {
             style={styles.input}
           />
 
-          <Button title="Login" onPress={handleLogin} />
+          <View style={styles.buttonGroup}>
+            <TouchableOpacity style={styles.button} onPress={handleLogin}>
+              <Text style={styles.buttonText}>Login</Text>
+            </TouchableOpacity>
 
-          <View style={{ marginTop: 12 }}>
-            <Button
-              title="Create Account"
+            <TouchableOpacity
+              style={[styles.button, { marginTop: 12 }]}
+
               onPress={() => navigation.navigate('Register')}
-            />
-
-          {__DEV__ && (
-            <View style={{ marginTop: 8 }}>
-              <Button title="Dev: Skip Login" onPress={onLogin} />
-            </View>
-          )}
-        </View>
+            >
+              <Text style={styles.buttonText}>Create Account</Text>
+            </TouchableOpacity>
+            {__DEV__ && (
+              <TouchableOpacity
+                style={[styles.button, { marginTop: 12 }]}
+                onPress={onLogin}
+              >
+                <Text style={styles.buttonText}>Dev: Skip Login</Text>
+              </TouchableOpacity>
+            )}
+          </View>
         </View>
       </ImageBackground>
     </TouchableWithoutFeedback>
@@ -136,5 +143,29 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     borderWidth: 1,
     marginBottom: 16,
+    width: '30%',
+    alignSelf: 'center',     // horizontally center within parent
+    marginVertical: 10       // spacing above/below
+  },
+
+    buttonGroup: {
+    marginTop: 24,
+  },
+  button: {
+    backgroundColor: '#fff',
+    paddingVertical: 12,
+    borderRadius: 8,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    alignItems: 'center',
+    width: '20%',
+    alignSelf: 'center',     // horizontally center within parent
+    marginVertical: 10       // spacing above/below
+
+  },
+  buttonText: {
+    color: '#000',
+    fontSize: 16,
+    fontWeight: '500',
   },
 });
