@@ -18,7 +18,7 @@ export default function MoodLogScreen() {
   const [note, setNote] = useState('');
   const [token, setToken] = useState(null);
 
-  // ✅ Load token from local storage when component mounts
+  // Load token from local storage when component mounts
   useEffect(() => {
     const fetchToken = async () => {
       const savedToken = await AsyncStorage.getItem('token');
